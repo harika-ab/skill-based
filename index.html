@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillMatch - Skill-Based Job Matching Platform</title>
+  <style>
+    /* ==========================================================================
+       1. CSS VARIABLES (DESIGN SYSTEM & PALETTE)
+       ========================================================================== */
+    :root {
+      /* Primary Blue Palette */
+      --primary-50: #eff6ff;
+      --primary-100: #dbeafe;
+      --primary-200: #bfdbfe;
+      --primary-500: #3b82f6;
+      --primary-600: #2563eb;
+      --primary-700: #1d4ed8;
+
+      /* Neutral Palette (Light Greys & Dark Slates) */
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-focus: #93c5fd;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      /* Functional Match Feedback Colors */
+      --success-bg: #ecfdf5;
+      --success-text: #065f46;
+      --success-border: #a7f3d0;
+      --success-bar: #10b981;
+
+      --warning-bg: #fffbeb;
+      --warning-text: #92400e;
+      --warning-border: #fde68a;
+      --warning-bar: #f59e0b;
+
+      --neutral-bar: #94a3b8;
+      --danger-text: #b91c1c;
+
+      /* Shadows & Radii */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+
+      /* Typography */
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* ==========================================================================
+       2. BASE & RESET STYLES
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
+    }
+
+    a {
+      color: var(--primary-600);
+      text-decoration: none;
+    }
+
+    button, input, select {
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    /* Container for centered page content */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       3. NAVIGATION & HEADER
+       ========================================================================== */
+    .header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: var(--primary-700);
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      color: #ffffff;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    .brand-badge {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--primary-200);
+      font-weight: 600;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .stat-item strong {
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       4. HERO BANNER & INSTRUCTIONS
+       ========================================================================== */
+    .hero {
+      background: linear-gradient(180deg, #eff6ff 0%, var(--bg-main) 100%);
+      padding: 40px 0 24px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span {
+      color: var(--primary-600);
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 30px;
+    }
+
+    /* Step Workflow Cards */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto 10px;
+      text-align: left;
+    }
+
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-100);
+      color: var(--primary-700);
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .step-card h4 {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .step-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       5. CANDIDATE PROFILE SECTION (SKILL MANAGEMENT)
+       ========================================================================== */
+    .profile-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .profile-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-header .badge-count {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--primary-200);
+    }
+
+    /* Skill Input Form */
+    .skill-input-form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .skill-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .skill-input:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-600);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-700);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: #cbd5e1;
+    }
+
+    .form-message {
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      min-height: 20px;
+      font-weight: 500;
+    }
+
+    .form-message.error {
+      color: var(--danger-text);
+    }
+
+    .form-message.success {
+      color: var(--success-text);
+    }
+
+    /* Popular Skills Quick-Pick Chips */
+    .quick-skills-area {
+      margin-bottom: 20px;
+      padding: 14px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-color);
+    }
+
+    .quick-skills-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-chips-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-quick {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chip-quick:hover {
+      background: var(--primary-50);
+      border-color: var(--primary-500);
+      color: var(--primary-700);
+      transform: translateY(-1px);
+    }
+
+    /* Selected Skills Container */
+    .selected-skills-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .selected-skills-header span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .skills-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 48px;
+      align-items: center;
+    }
+
+    .skill-tag {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      border: 1px solid var(--primary-200);
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: scaleIn 0.2s ease-out;
+    }
+
+    .skill-tag-remove {
+      background: none;
+      border: none;
+      color: var(--primary-700);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 1rem;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.2s, background-color 0.2s;
+    }
+
+    .skill-tag-remove:hover {
+      opacity: 1;
+      background-color: var(--primary-200);
+    }
+
+    .no-skills-msg {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ==========================================================================
+       6. SEARCH & FILTER TOOLBAR
+       ========================================================================== */
+    .filter-toolbar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      pointer-events: none;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: #ffffff;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--primary-500);
+    }
+
+    .results-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .results-summary strong {
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       7. JOB LISTINGS GRID & CARDS
+       ========================================================================== */
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    .job-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+
+    .job-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-200);
+    }
+
+    /* Top Row: Title, Company & Type */
+    .job-top {
+      margin-bottom: 14px;
+    }
+
+    .job-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .job-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .job-company {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary-600);
+      margin-bottom: 12px;
+    }
+
+    .job-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .meta-tag {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Match Percentage Box */
+    .match-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 18px;
+    }
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .match-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .match-percentage-badge {
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .match-high {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+    }
+
+    .match-medium {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+    }
+
+    .match-low {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      transition: width 0.4s ease;
+    }
+
+    .progress-fill-high {
+      background: var(--success-bar);
+    }
+
+    .progress-fill-medium {
+      background: var(--warning-bar);
+    }
+
+    .progress-fill-low {
+      background: var(--neutral-bar);
+    }
+
+    .match-fraction {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Skills Pill List inside Card */
+    .card-skills-section {
+      margin-bottom: 20px;
+    }
+
+    .card-skills-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .card-skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .req-skill-chip {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .req-skill-matched {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+      font-weight: 600;
+    }
+
+    .req-skill-missing {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Card Footer */
+    .card-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .job-stipend {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .btn-view-details {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      border: 1px solid var(--primary-200);
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-view-details:hover {
+      background: var(--primary-600);
+      color: #ffffff;
+      border-color: var(--primary-600);
+    }
+
+    /* Empty state */
+    .empty-state {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--primary-50);
+      color: var(--primary-600);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      font-size: 1.25rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 20px;
+      font-size: 0.95rem;
+    }
+
+    /* ==========================================================================
+       8. MODAL DIALOG (JOB DETAILS)
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 2;
+    }
+
+    .modal-close-btn {
+      background: var(--bg-surface);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 24px 28px;
+    }
+
+    .modal-match-summary {
+      background: var(--primary-50);
+      border: 1px solid var(--primary-200);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .modal-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .modal-description {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .modal-skills-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .skill-bucket {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .skill-bucket-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bucket-matched {
+      color: var(--success-text);
+    }
+
+    .bucket-missing {
+      color: var(--text-muted);
+    }
+
+    .modal-footer {
+      padding: 18px 28px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: var(--bg-surface);
+      border-bottom-left-radius: var(--radius-lg);
+      border-bottom-right-radius: var(--radius-lg);
+    }
+
+    /* Demo Application Notification Alert */
+    .demo-alert {
+      display: none;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      margin-top: 16px;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       9. FOOTER
+       ========================================================================== */
+    .footer {
+      margin-top: 60px;
+      border-top: 1px solid var(--border-color);
+      padding: 30px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer strong {
+      color: var(--primary-600);
+    }
+
+    /* ==========================================================================
+       10. RESPONSIVE DESIGN (MEDIA QUERIES)
+       ========================================================================== */
+    @media (max-width: 992px) {
+      .filter-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .filter-grid .search-box {
+        grid-column: 1 / -1;
+      }
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 1.7rem;
+      }
+      .profile-card {
+        padding: 20px;
+      }
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+      .jobs-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-skills-split {
+        grid-template-columns: 1fr;
+      }
+      .header-stats {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION BAR
+       ========================================================================== -->
+  <header class="header">
+    <div class="container header-content">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <!-- Inline Briefcase with Target SVG Icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <span>SkillMatch</span>
+        <span class="brand-badge">Mini Project</span>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-item">
+          Total Jobs: <strong id="header-total-jobs">0</strong>
+        </div>
+        <div class="stat-item">
+          Your Skills: <strong id="header-skill-count">0</strong>
+        </div>
+        <div class="stat-item">
+          Top Match: <strong id="header-top-match">0%</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       HERO BANNER & WORKFLOW EXPLANATION
+       ========================================================================== -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">Match Your <span>Skills</span> with the Right Job</h1>
+      <p class="hero-subtitle">
+        Traditional job searches focus on degrees and job titles. SkillMatch helps students and job seekers discover opportunities by matching what you actually know how to do.
+      </p>
+
+      <!-- 3-Step Process for Beginners -->
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Add Your Skills</h4>
+            <p>Type your technical or soft skills or choose quick suggestions below.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Instant Matching</h4>
+            <p>Our algorithm compares your profile against all job requirements in real-time.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Inspect & Apply</h4>
+            <p>See matching skills, identify missing skills to learn, and view details.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="container">
+
+    <!-- 1. CANDIDATE PROFILE (SKILL ENTRY & MANAGEMENT) -->
+    <section class="profile-card" aria-label="Candidate Profile">
+      <div class="profile-header">
+        <h2>
+          <!-- User Profile SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-600);">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Candidate Skill Profile
+        </h2>
+        <span class="badge-count" id="badge-skills-count">0 Skills Added</span>
+      </div>
+
+      <!-- Skill Entry Input -->
+      <form id="skill-form" class="skill-input-form" onsubmit="event.preventDefault(); addSkillFromInput();">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="skill-input" 
+            class="skill-input" 
+            placeholder="Type a skill (e.g. HTML, Python, Communication) and press Enter..."
+            autocomplete="off"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-add-skill">
+          <!-- Plus SVG -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Skill
+        </button>
+      </form>
+
+      <!-- Feedback message area (empty field alert, duplicate alert) -->
+      <div id="form-message" class="form-message" aria-live="polite"></div>
+
+      <!-- Quick Add Chips -->
+      <div class="quick-skills-area">
+        <div class="quick-skills-title">
+          <!-- Sparkles / Star SVG -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Quick Suggestions (Click to add to your profile):
+        </div>
+        <div class="quick-chips-wrapper" id="quick-skills-container">
+          <!-- Pre-populated via JS -->
+        </div>
+      </div>
+
+      <!-- User's Active Skill Tags -->
+      <div class="selected-skills-header">
+        <span>Your Active Skills:</span>
+        <button type="button" class="btn-outline" id="btn-clear-all-skills" onclick="clearAllSkills()">
+          Clear All Skills
+        </button>
+      </div>
+      <div class="skills-tag-list" id="skills-tag-container">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- 2. SEARCH & FILTER CONTROLS -->
+    <section class="filter-toolbar" aria-label="Search and Filter Controls">
+      <div class="filter-grid">
+        <!-- Search Input -->
+        <div class="search-box">
+          <span class="search-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by title, company, or required skill..."
+            oninput="handleSearchAndFilterChange()"
+          />
+        </div>
+
+        <!-- Filter by Job Type -->
+        <div>
+          <select id="filter-job-type" class="filter-select" onchange="handleSearchAndFilterChange()">
+            <option value="ALL">All Job Types</option>
+            <option value="Internship">Internship</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+          </select>
+        </div>
+
+        <!-- Filter by Experience Level -->
+        <div>
+          <select id="filter-experience" class="filter-select" onchange="handleSearchAndFilterChange()">
+            <option value="ALL">All Experience Levels</option>
+            <option value="Fresher / Entry-Level">Fresher / Entry-Level</option>
+            <option value="Junior (1-2 yrs)">Junior (1-2 yrs)</option>
+          </select>
+        </div>
+
+        <!-- Clear Filters Button -->
+        <div>
+          <button type="button" class="btn btn-outline" style="width: 100%; height: 42px;" onclick="resetAllFilters()">
+            <!-- Rotate-ccw SVG -->
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4v6h6"></path>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. RESULTS SUMMARY BAR -->
+    <div class="results-summary">
+      <div>
+        Showing <strong id="jobs-count-text">0</strong> job opportunities 
+        <span id="sort-notice">(Sorted automatically from highest to lowest skill match)</span>
+      </div>
+      <div>
+        Need more matches? Try adding more skills to your profile above!
+      </div>
+    </div>
+
+    <!-- 4. JOB LISTINGS GRID -->
+    <section class="jobs-grid" id="jobs-container" aria-label="Job Listings">
+      <!-- Job cards are dynamically inserted here by JavaScript -->
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL DIALOG: DETAILED JOB VIEW
+       ========================================================================== -->
+  <div class="modal-overlay" id="job-modal" onclick="handleModalOverlayClick(event)">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-title" class="job-title" style="font-size: 1.35rem; margin-bottom: 4px;">Job Title</h2>
+          <div id="modal-company" class="job-company" style="margin-bottom: 0;">Company Name</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeJobModal()" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        
+        <!-- Job Meta Details -->
+        <div class="job-meta-row" id="modal-meta-row" style="margin-bottom: 20px;">
+          <!-- Dynamically populated tags -->
+        </div>
+
+        <!-- Match Status Banner -->
+        <div class="modal-match-summary" id="modal-match-box">
+          <!-- Dynamically computed match overview -->
+        </div>
+
+        <!-- Job Description -->
+        <div class="modal-section-title">About the Role</div>
+        <p class="modal-description" id="modal-description">Detailed description will appear here.</p>
+
+        <!-- Skill Analysis (Matching vs Missing) -->
+        <div class="modal-section-title">Skill Analysis Breakdown</div>
+        <div class="modal-skills-split">
+          
+          <!-- Matched Skills Bucket -->
+          <div class="skill-bucket">
+            <div class="skill-bucket-title bucket-matched">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Matched Skills (<span id="modal-matched-count">0</span>)
+            </div>
+            <div class="card-skills-list" id="modal-matched-list">
+              <!-- Matched skills -->
+            </div>
+          </div>
+
+          <!-- Missing Skills Bucket -->
+          <div class="skill-bucket">
+            <div class="skill-bucket-title bucket-missing">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Skills to Learn (<span id="modal-missing-count">0</span>)
+            </div>
+            <div class="card-skills-list" id="modal-missing-list">
+              <!-- Missing skills -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Demo Application Alert Message -->
+        <div id="demo-apply-alert" class="demo-alert">
+          <strong>Application Simulation:</strong> Thank you for your interest! This is a college demonstration front-end project. In a real-world system, your profile and resume would now be delivered to the company's recruiter portal.
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeJobModal()">Close</button>
+        <button type="button" class="btn btn-primary" id="btn-apply-job" onclick="handleApplyDemo()">
+          <!-- Paper plane / Send SVG -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          Apply for this Role
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <p><strong>SkillMatch</strong> — Skill-Based Job Matching Platform</p>
+      <p>Built with Pure HTML, CSS, and Vanilla JavaScript &bull; Designed for College Mini Projects</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT APPLICATION LOGIC
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       A. SAMPLE DATASETS
+       ========================================================================== */
+
+    // List of predefined quick suggestions for students to click and explore easily
+    const POPULAR_SKILLS = [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Python",
+      "Communication",
+      "Problem-solving",
+      "UI Design",
+      "Excel",
+      "GitHub",
+      "Creativity",
+      "Attention to Detail",
+      "Analytical Thinking"
+    ];
+
+    // Sample Job Openings with fictional companies, required skills, and metadata
+    const SAMPLE_JOBS = [
+      {
+        id: 1,
+        title: "Front-End Developer Intern",
+        company: "TechNova Labs",
+        location: "Remote",
+        type: "Internship",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹18,000 / month",
+        description: "Join our front-end engineering team to create fast, accessible, and responsive web user interfaces. You will collaborate with designers, write clean HTML/CSS/JS, and implement user-friendly web features.",
+        skills: ["HTML", "CSS", "JavaScript"]
+      },
+      {
+        id: 2,
+        title: "Python Developer Intern",
+        company: "CloudSphere Technologies",
+        location: "Bangalore, India (Hybrid)",
+        type: "Internship",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹20,000 / month",
+        description: "Work on back-end automation scripts, API integration, and database operations. Ideal for candidates with solid Python fundamentals who love algorithmic problem-solving.",
+        skills: ["Python", "Problem-solving"]
+      },
+      {
+        id: 3,
+        title: "UI/UX Design Intern",
+        company: "BrightPath Innovations",
+        location: "Mumbai, India (On-site)",
+        type: "Internship",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹15,000 / month",
+        description: "Collaborate with product managers and developers to design wireframes, user personas, and high-fidelity prototypes. Excellent communication and an eye for creative visuals are essential.",
+        skills: ["UI Design", "Creativity", "Communication"]
+      },
+      {
+        id: 4,
+        title: "Data Analyst Intern",
+        company: "InsightMetrics Analytics",
+        location: "Hyderabad, India (Hybrid)",
+        type: "Internship",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹22,000 / month",
+        description: "Transform raw data into meaningful business dashboards. You will clean datasets using Python, analyze trends in Excel spreadsheets, and communicate statistical findings to leadership.",
+        skills: ["Python", "Excel", "Analytical Thinking"]
+      },
+      {
+        id: 5,
+        title: "Junior Web Developer",
+        company: "NexaByte Solutions",
+        location: "Remote",
+        type: "Full-time",
+        experience: "Junior (1-2 yrs)",
+        stipend: "₹4.8 - ₹6.5 LPA",
+        description: "Build and maintain production-ready client portals. Must be comfortable managing code repositories via GitHub, writing vanilla JavaScript, and building cross-browser compatible layouts.",
+        skills: ["HTML", "CSS", "JavaScript", "GitHub"]
+      },
+      {
+        id: 6,
+        title: "Software Testing Intern",
+        company: "Apex Quality Systems",
+        location: "Pune, India (On-site)",
+        type: "Internship",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹16,000 / month",
+        description: "Execute manual and automated test suites, discover corner-case bugs, and write clear defect reports. Requires high attention to detail and good team communication.",
+        skills: ["Problem-solving", "Attention to Detail", "Communication"]
+      },
+      {
+        id: 7,
+        title: "Full-Stack Developer Trainee",
+        company: "Zenith Web Works",
+        location: "Bangalore, India (Hybrid)",
+        type: "Full-time",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹5.0 - ₹7.0 LPA",
+        description: "A fast-track rotational role touching client-side interfaces and server-side Python logic. Great opportunity for versatile developers ready to tackle end-to-end full stack problems.",
+        skills: ["HTML", "CSS", "JavaScript", "Python", "Problem-solving"]
+      },
+      {
+        id: 8,
+        title: "Junior UI & Frontend Associate",
+        company: "PixelCraft Interactive",
+        location: "Remote",
+        type: "Part-time",
+        experience: "Fresher / Entry-Level",
+        stipend: "₹14,000 / month",
+        description: "Help craft intuitive website templates, design banners, and code responsive UI components. Blend your visual creativity with modern HTML and CSS styling.",
+        skills: ["HTML", "CSS", "UI Design", "Creativity"]
+      }
+    ];
+
+    /* ==========================================================================
+       B. APPLICATION STATE
+       ========================================================================== */
+    // Candidate's current skills array (starts with 3 beginner skills for immediate demo value)
+    let candidateSkills = ["HTML", "CSS", "JavaScript"];
+
+    // Active modal job reference
+    let currentSelectedJobId = null;
+
+    /* ==========================================================================
+       C. HELPER FUNCTIONS
+       ========================================================================== */
+
+    /**
+     * Normalizes a skill string for case-insensitive and whitespace-insensitive matching.
+     * Example: " JavaScript " -> "javascript"
+     * @param {string} skill 
+     * @returns {string}
+     */
+    function normalizeSkill(skill) {
+      if (!skill) return "";
+      return skill.trim().toLowerCase();
+    }
+
+    /**
+     * Sets a temporary feedback message above the skill input.
+     * @param {string} msg 
+     * @param {"error" | "success"} type 
+     */
+    function showFormMessage(msg, type = "error") {
+      const msgBox = document.getElementById("form-message");
+      msgBox.textContent = msg;
+      msgBox.className = `form-message ${type}`;
+
+      // Automatically clear message after 3.5 seconds
+      setTimeout(() => {
+        if (msgBox.textContent === msg) {
+          msgBox.textContent = "";
+          msgBox.className = "form-message";
+        }
+      }, 3500);
+    }
+
+    /* ==========================================================================
+       D. SKILL-MATCHING ALGORITHM (CORE LOGIC)
+       ========================================================================== */
+
+    /**
+     * Compares a job's required skills with candidate's skills.
+     * Calculates the match percentage:
+     * Match Percentage = (Matching Skills ÷ Total Required Skills) * 100
+     * 
+     * @param {Array<string>} jobSkills - The required skills for the job
+     * @param {Array<string>} userSkills - The candidate's selected skills
+     * @returns {Object} { percentage, matchedSkills, missingSkills, totalRequired }
+     */
+    function calculateSkillMatch(jobSkills, userSkills) {
+      const totalRequired = jobSkills.length;
+      if (totalRequired === 0) {
+        return { percentage: 0, matchedSkills: [], missingSkills: [], totalRequired: 0 };
+      }
+
+      // Convert user skills into a Set of normalized strings for efficient lookup
+      const normalizedUserSkills = new Set(userSkills.map(s => normalizeSkill(s)));
+
+      const matchedSkills = [];
+      const missingSkills = [];
+
+      jobSkills.forEach(skill => {
+        if (normalizedUserSkills.has(normalizeSkill(skill))) {
+          matchedSkills.push(skill);
+        } else {
+          missingSkills.push(skill);
+        }
+      });
+
+      // Calculate percentage and round to the nearest whole number
+      const percentage = Math.round((matchedSkills.length / totalRequired) * 100);
+
+      return {
+        percentage,
+        matchedSkills,
+        missingSkills,
+        totalRequired
+      };
+    }
+
+    /* ==========================================================================
+       E. CANDIDATE SKILL PROFILE MANAGEMENT
+       ========================================================================== */
+
+    /**
+     * Adds a skill to the candidate's profile.
+     * Performs validation: non-empty check and duplicate check (case-insensitive).
+     * @param {string} rawSkill 
+     */
+    function addSkill(rawSkill) {
+      const trimmed = rawSkill.trim();
+
+      if (!trimmed) {
+        showFormMessage("Please enter a skill name before clicking Add.", "error");
+        return false;
+      }
+
+      // Check if skill already exists (case-insensitive)
+      const isDuplicate = candidateSkills.some(
+        s => normalizeSkill(s) === normalizeSkill(trimmed)
+      );
+
+      if (isDuplicate) {
+        showFormMessage(`"${trimmed}" is already in your skills profile!`, "error");
+        return false;
+      }
+
+      // Add to state
+      candidateSkills.push(trimmed);
+      showFormMessage(`Added "${trimmed}" to your profile!`, "success");
+
+      // Update UI components
+      renderSkillsTags();
+      renderJobListings();
+      updateHeaderStats();
+
+      return true;
+    }
+
+    /**
+     * Handler when user submits the skill input form
+     */
+    function addSkillFromInput() {
+      const input = document.getElementById("skill-input");
+      const success = addSkill(input.value);
+      if (success) {
+        input.value = "";
+        input.focus();
+      }
+    }
+
+    /**
+     * Removes a skill by exact index or value
+     * @param {string} skillToRemove 
+     */
+    function removeSkill(skillToRemove) {
+      candidateSkills = candidateSkills.filter(
+        s => normalizeSkill(s) !== normalizeSkill(skillToRemove)
+      );
+
+      renderSkillsTags();
+      renderJobListings();
+      updateHeaderStats();
+    }
+
+    /**
+     * Clears all skills from profile
+     */
+    function clearAllSkills() {
+      if (candidateSkills.length === 0) return;
+      
+      candidateSkills = [];
+      showFormMessage("Cleared all skills. Add some skills to find matches!", "success");
+
+      renderSkillsTags();
+      renderJobListings();
+      updateHeaderStats();
+    }
+
+    /**
+     * Renders the candidate's active skill badges with remove buttons
+     */
+    function renderSkillsTags() {
+      const container = document.getElementById("skills-tag-container");
+      const countBadge = document.getElementById("badge-skills-count");
+      
+      countBadge.textContent = `${candidateSkills.length} Skill${candidateSkills.length === 1 ? '' : 's'} Added`;
+
+      if (candidateSkills.length === 0) {
+        container.innerHTML = `<span class="no-skills-msg">No skills added yet. Type a skill above or click quick suggestions!</span>`;
+        return;
+      }
+
+      container.innerHTML = candidateSkills.map(skill => `
+        <span class="skill-tag">
+          ${escapeHtml(skill)}
+          <button 
+            type="button" 
+            class="skill-tag-remove" 
+            title="Remove ${escapeHtml(skill)}" 
+            onclick="removeSkill('${escapeHtml(skill)}')"
+            aria-label="Remove ${escapeHtml(skill)}"
+          >
+            &times;
+          </button>
+        </span>
+      `).join("");
+    }
+
+    /**
+     * Renders the quick-add popular skill chips
+     */
+    function renderQuickSkills() {
+      const container = document.getElementById("quick-skills-container");
+      container.innerHTML = POPULAR_SKILLS.map(skill => `
+        <button 
+          type="button" 
+          class="chip-quick" 
+          onclick="addSkill('${escapeHtml(skill)}')"
+        >
+          <span>+</span> ${escapeHtml(skill)}
+        </button>
+      `).join("");
+    }
+
+    /* ==========================================================================
+       F. SEARCH, FILTERS & SORTING
+       ========================================================================== */
+
+    /**
+     * Gets filtered and sorted jobs based on search term, filters, and match score.
+     * Requirement: Always sort from highest match percentage to lowest!
+     */
+    function getProcessedJobs() {
+      const searchVal = document.getElementById("search-input").value.trim().toLowerCase();
+      const typeFilter = document.getElementById("filter-job-type").value;
+      const expFilter = document.getElementById("filter-experience").value;
+
+      // 1. Calculate match statistics for each job
+      const processed = SAMPLE_JOBS.map(job => {
+        const matchData = calculateSkillMatch(job.skills, candidateSkills);
+        return {
+          ...job,
+          ...matchData
+        };
+      });
+
+      // 2. Filter according to search and dropdown criteria
+      const filtered = processed.filter(job => {
+        // Search filter (Matches Job Title, Company Name, or any Required Skill)
+        const matchesSearch = !searchVal || 
+          job.title.toLowerCase().includes(searchVal) ||
+          job.company.toLowerCase().includes(searchVal) ||
+          job.skills.some(skill => skill.toLowerCase().includes(searchVal));
+
+        // Job Type filter
+        const matchesType = (typeFilter === "ALL") || (job.type === typeFilter);
+
+        // Experience Level filter
+        const matchesExp = (expFilter === "ALL") || (job.experience === expFilter);
+
+        return matchesSearch && matchesType && matchesExp;
+      });
+
+      // 3. Sort by match percentage in DESCENDING order (highest match first)
+      filtered.sort((a, b) => {
+        if (b.percentage !== a.percentage) {
+          return b.percentage - a.percentage; // Higher percentage first
+        }
+        // Secondary sort: Number of matching skills
+        if (b.matchedSkills.length !== a.matchedSkills.length) {
+          return b.matchedSkills.length - a.matchedSkills.length;
+        }
+        // Alphabetical tie-breaker
+        return a.title.localeCompare(b.title);
+      });
+
+      return filtered;
+    }
+
+    /**
+     * Triggered when search input or dropdown filters change
+     */
+    function handleSearchAndFilterChange() {
+      renderJobListings();
+    }
+
+    /**
+     * Resets all search and dropdown filters back to defaults
+     */
+    function resetAllFilters() {
+      document.getElementById("search-input").value = "";
+      document.getElementById("filter-job-type").value = "ALL";
+      document.getElementById("filter-experience").value = "ALL";
+      renderJobListings();
+    }
+
+    /* ==========================================================================
+       G. JOB CARDS RENDERING
+       ========================================================================== */
+
+    /**
+     * Determines color theme classes based on percentage score
+     * @param {number} pct 
+     */
+    function getMatchVisualClasses(pct) {
+      if (pct >= 70) {
+        return { badgeClass: "match-high", fillClass: "progress-fill-high" };
+      } else if (pct >= 40) {
+        return { badgeClass: "match-medium", fillClass: "progress-fill-medium" };
+      } else {
+        return { badgeClass: "match-low", fillClass: "progress-fill-low" };
+      }
+    }
+
+    /**
+     * Renders the grid of job cards
+     */
+    function renderJobListings() {
+      const container = document.getElementById("jobs-container");
+      const countText = document.getElementById("jobs-count-text");
+      const jobs = getProcessedJobs();
+
+      countText.textContent = jobs.length;
+
+      if (jobs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h3>No Job Opportunities Found</h3>
+            <p>No job listings matched your current search filters or skill selection. Try adjusting your search query or resetting filters.</p>
+            <button class="btn btn-primary" onclick="resetAllFilters()">Reset Search & Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = jobs.map(job => {
+        const { badgeClass, fillClass } = getMatchVisualClasses(job.percentage);
+        
+        // Render required skills with checkmark if matched, circle if missing
+        const skillsMarkup = job.skills.map(skill => {
+          const isMatched = job.matchedSkills.includes(skill);
+          if (isMatched) {
+            return `
+              <span class="req-skill-chip req-skill-matched" title="You possess this skill!">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                ${escapeHtml(skill)}
+              </span>
+            `;
+          } else {
+            return `
+              <span class="req-skill-chip req-skill-missing" title="Missing skill">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                ${escapeHtml(skill)}
+              </span>
+            `;
+          }
+        }).join("");
+
+        return `
+          <article class="job-card" data-job-id="${job.id}">
+            <div class="job-top">
+              
+              <div class="job-header-row">
+                <h3 class="job-title">${escapeHtml(job.title)}</h3>
+              </div>
+              
+              <div class="job-company">${escapeHtml(job.company)}</div>
+
+              <div class="job-meta-row">
+                <span class="meta-tag">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                  ${escapeHtml(job.type)}
+                </span>
+                <span class="meta-tag">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  ${escapeHtml(job.experience)}
+                </span>
+                <span class="meta-tag">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  ${escapeHtml(job.location)}
+                </span>
+              </div>
+
+              <!-- Match Gauge -->
+              <div class="match-box">
+                <div class="match-header">
+                  <span class="match-label">Skill Match Score</span>
+                  <span class="match-percentage-badge ${badgeClass}">
+                    ${job.percentage}%
+                  </span>
+                </div>
+                
+                <div class="progress-bar-bg" aria-label="Match percentage bar">
+                  <div class="progress-bar-fill ${fillClass}" style="width: ${job.percentage}%;"></div>
+                </div>
+
+                <div class="match-fraction">
+                  <span>${job.matchedSkills.length} of ${job.totalRequired} required skills matched</span>
+                  <span>${job.percentage >= 70 ? '🔥 Great Fit' : job.percentage >= 40 ? '👍 Good Fit' : '📚 Skills Gap'}</span>
+                </div>
+              </div>
+
+              <!-- Required Skills Overview -->
+              <div class="card-skills-section">
+                <div class="card-skills-title">Required Skills:</div>
+                <div class="card-skills-list">
+                  ${skillsMarkup}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Card Bottom Action -->
+            <div class="card-footer">
+              <span class="job-stipend">${escapeHtml(job.stipend)}</span>
+              <button 
+                type="button" 
+                class="btn-view-details" 
+                onclick="openJobModal(${job.id})"
+                aria-label="View details for ${escapeHtml(job.title)}"
+              >
+                View Details
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    /* ==========================================================================
+       H. JOB DETAILS MODAL IMPLEMENTATION
+       ========================================================================== */
+
+    /**
+     * Opens the modal dialog with detailed information for a specific job
+     * @param {number} jobId 
+     */
+    function openJobModal(jobId) {
+      const job = SAMPLE_JOBS.find(j => j.id === jobId);
+      if (!job) return;
+
+      currentSelectedJobId = jobId;
+      const matchData = calculateSkillMatch(job.skills, candidateSkills);
+      const { badgeClass, fillClass } = getMatchVisualClasses(matchData.percentage);
+
+      // Populate text fields
+      document.getElementById("modal-title").textContent = job.title;
+      document.getElementById("modal-company").textContent = job.company;
+      document.getElementById("modal-description").textContent = job.description;
+
+      // Reset application demo alert
+      document.getElementById("demo-apply-alert").style.display = "none";
+
+      // Meta tags row
+      const metaRow = document.getElementById("modal-meta-row");
+      metaRow.innerHTML = `
+        <span class="meta-tag">💼 ${escapeHtml(job.type)}</span>
+        <span class="meta-tag">🎓 ${escapeHtml(job.experience)}</span>
+        <span class="meta-tag">📍 ${escapeHtml(job.location)}</span>
+        <span class="meta-tag">💰 ${escapeHtml(job.stipend)}</span>
+      `;
+
+      // Match status card inside modal
+      const matchBox = document.getElementById("modal-match-box");
+      matchBox.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong style="color: var(--primary-700); font-size: 1.05rem;">
+            Match Score: ${matchData.percentage}%
+          </strong>
+          <span class="match-percentage-badge ${badgeClass}">
+            ${matchData.matchedSkills.length} of ${matchData.totalRequired} Skills Matched
+          </span>
+        </div>
+        <div class="progress-bar-bg" style="height: 10px; margin-bottom: 8px;">
+          <div class="progress-bar-fill ${fillClass}" style="width: ${matchData.percentage}%;"></div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          ${matchData.percentage === 100 
+            ? "🎉 Perfect match! You have all the skills required for this position." 
+            : matchData.percentage >= 50 
+            ? "✅ Strong match! You have most skills and can quickly learn the remaining ones." 
+            : "💡 Noticeable skill gap. Check the missing skills below to prepare for this role."}
+        </div>
+      `;
+
+      // Matched skills list
+      const matchedList = document.getElementById("modal-matched-list");
+      document.getElementById("modal-matched-count").textContent = matchData.matchedSkills.length;
+      if (matchData.matchedSkills.length > 0) {
+        matchedList.innerHTML = matchData.matchedSkills.map(skill => `
+          <span class="req-skill-chip req-skill-matched">
+            ✓ ${escapeHtml(skill)}
+          </span>
+        `).join("");
+      } else {
+        matchedList.innerHTML = `<span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">None yet</span>`;
+      }
+
+      // Missing skills list
+      const missingList = document.getElementById("modal-missing-list");
+      document.getElementById("modal-missing-count").textContent = matchData.missingSkills.length;
+      if (matchData.missingSkills.length > 0) {
+        missingList.innerHTML = matchData.missingSkills.map(skill => `
+          <span class="req-skill-chip req-skill-missing">
+            + ${escapeHtml(skill)}
+          </span>
+        `).join("");
+      } else {
+        missingList.innerHTML = `<span style="font-size: 0.85rem; color: var(--success-text); font-weight: 600;">None! You meet all requirements!</span>`;
+      }
+
+      // Show modal overlay
+      const modal = document.getElementById("job-modal");
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden"; // Prevent background scrolling
+    }
+
+    /**
+     * Closes the job details modal
+     */
+    function closeJobModal() {
+      const modal = document.getElementById("job-modal");
+      modal.classList.remove("active");
+      document.body.style.overflow = ""; // Restore background scrolling
+      currentSelectedJobId = null;
+    }
+
+    /**
+     * Closes modal when user clicks on background overlay
+     */
+    function handleModalOverlayClick(e) {
+      if (e.target.id === "job-modal") {
+        closeJobModal();
+      }
+    }
+
+    /**
+     * Keyboard support: Close modal when Esc key is pressed
+     */
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.getElementById("job-modal").classList.contains("active")) {
+        closeJobModal();
+      }
+    });
+
+    /**
+     * Handles "Apply" button click with demo feedback message
+     */
+    function handleApplyDemo() {
+      const alertBox = document.getElementById("demo-apply-alert");
+      alertBox.style.display = "block";
+      alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    /* ==========================================================================
+       I. STATS & SECURITY HELPERS
+       ========================================================================== */
+
+    /**
+     * Updates header statistics summary
+     */
+    function updateHeaderStats() {
+      document.getElementById("header-total-jobs").textContent = SAMPLE_JOBS.length;
+      document.getElementById("header-skill-count").textContent = candidateSkills.length;
+
+      // Calculate maximum match currently attained
+      let topMatch = 0;
+      SAMPLE_JOBS.forEach(job => {
+        const { percentage } = calculateSkillMatch(job.skills, candidateSkills);
+        if (percentage > topMatch) {
+          topMatch = percentage;
+        }
+      });
+      document.getElementById("header-top-match").textContent = `${topMatch}%`;
+    }
+
+    /**
+     * Escapes unsafe HTML characters to prevent XSS issues when rendering strings
+     * @param {string} str 
+     * @returns {string}
+     */
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ==========================================================================
+       J. INITIALIZATION
+       ========================================================================== */
+    window.addEventListener("DOMContentLoaded", () => {
+      renderQuickSkills();
+      renderSkillsTags();
+      renderJobListings();
+      updateHeaderStats();
+    });
+  </script>
+</body>
+</html>
